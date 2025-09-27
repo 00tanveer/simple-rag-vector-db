@@ -1,6 +1,6 @@
 # INTRODUCTION
 
-This is an ultra simple naive retrieval-augmented generation application created to respond to queries about based on facts about cats in a text file.
+This is a simple naive retrieval-augmented generation application created to respond to queries about based on facts about cats in a text file.
 
 # BUILDING BLOCKS OF THE PROJECT
 1. Data layer - storing data on cat facts in a local `postgres` database and using `pgvector` as a vector extension in postgres to store vector embeddings
