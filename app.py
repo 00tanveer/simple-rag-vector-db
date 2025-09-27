@@ -1,25 +1,62 @@
 import ollama
 
+# import the necessary postgres library and connecting to local postgres database called cat-facts
+import psycopg
+from psycopg import sql
+import os
+import ast
+from dotenv import load_dotenv
+load_dotenv()
 EMBEDDING_MODEL = 'mxbai-embed-large:latest'
 LANGUAGE_MODEL = 'gemma3:4b'
 
-dataset = []
+# connect to the database
+conn = psycopg.connect(
+    dbname=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT")
+)
+cur = conn.cursor()
+# create a table to store the cat facts if it doesn't exist
+cur.execute('''
+CREATE TABLE IF NOT EXISTS cat_facts (
+    id SERIAL PRIMARY KEY,
+    fact TEXT NOT NULL,
+    embedding VECTOR(1024)
+)
+''')
+conn.commit()
+# insert cat facts into the table
+# with open("cat-facts.txt", "r") as file:
+#     facts = file.readlines()
+#     # for just 50 loops
+#     facts = facts[:50]
+#     for fact in facts:
+#         cur.execute('INSERT INTO cat_facts (fact) VALUES (%s)', (fact.strip(),))
+# conn.commit()
+# # close the connection
+# cur.close()
 
-with open("cat-facts.txt", "r") as file:
-    dataset = file.readlines()
-    print(f'Loaded {len(dataset)} entries')
 
-# Each element in the VECTOR_DB will be a tuple of (chunk of text, embedding)
-# The embedding is a list of floats, for example: [0.123, 0.456, ...]
-VECTOR_DB = []
 
-def add_chunk_to_vector_db(chunk):
-    embedding = ollama.embed(EMBEDDING_MODEL, input=chunk)['embeddings'][0]
-    VECTOR_DB.append((chunk, embedding))
+# index cat facts table by using our embedding model and store the embeddings in a pgvector with a lower count column in the cat-facts table
+cur = conn.cursor()
+conn.commit()
+# fetch all facts that don't have embeddings yet
+cur.execute('SELECT id, fact FROM cat_facts WHERE embedding IS NULL')
+rows = cur.fetchall()
+for row in rows:
+    fact_id, fact = row
+    embedding = ollama.embed(EMBEDDING_MODEL, input=fact)['embeddings'][0]
+    cur.execute('UPDATE cat_facts SET embedding = %s WHERE id = %s', (embedding, fact_id))
+conn.commit()
+# close the connection
+cur.close()
+conn.close()
 
-for i, chunk in enumerate(dataset):
-    add_chunk_to_vector_db(chunk)
-    # print(f'Added chunk {i+1}/{len(dataset)} to the database')
+
 
 def cosine_similarity(vec1, vec2):
     dot_product = sum(a * b for a, b in zip(vec1, vec2))
@@ -29,18 +66,39 @@ def cosine_similarity(vec1, vec2):
         return 0
     return dot_product / (norm_a * norm_b)
 
+# retrieve the top N most similar chunks from the vector database
 def retrieve(query, top_n=3):
     query_embedding = ollama.embed(EMBEDDING_MODEL, input=query)['embeddings'][0]
     
+    conn = psycopg.connect(
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT")
+    )
+    cur = conn.cursor()
+    cur.execute('SELECT fact, embedding FROM cat_facts WHERE embedding IS NOT NULL')
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    print(rows)
     #temporary list to hold (chunk, similarity) tuples
     similarities = []
-    similarities = [(chunk, cosine_similarity(query_embedding, emb)) for chunk, emb in VECTOR_DB]
+        
+    for fact, emb in rows:
+        # Convert embedding from string to list if needed
+        if isinstance(emb, str):
+            emb = ast.literal_eval(emb)
+        similarities.append((fact, cosine_similarity(query_embedding, emb)))
+    
     # sort by similarity score in descending order, because higher means more similar
     similarities.sort(key=lambda x: x[1], reverse=True)
-    return similarities[:top_n]
+    
     # finally return the top N most similar chunks
     return similarities[:top_n]
 
+# main chat loop
 input_query = input('Ask me a question: ')
 retrieved_knowledge = retrieve(input_query)
 print('Retrieved knowledge:')
