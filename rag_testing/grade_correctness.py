@@ -1,10 +1,14 @@
-import ollama 
-import json 
+import sys
+import os
+
+# Add parent directory to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from retrieval import retrieve
 from generation import generate_response_string
+import ollama
+import json
 
-EMBEDDING_MODEL = 'mxbai-embed-large:latest'
-LANGUAGE_MODEL = 'gemma3:4b'
 def ollama_grade_correctness(question, student_answer, reference_answer, LANGUAGE_MODEL):
     prompt = (
         f"{correctness_instructions}\n"
@@ -37,17 +41,6 @@ def ollama_grade_correctness(question, student_answer, reference_answer, LANGUAG
         print("Failed to parse LLM response:", response['message']['content'])
         return None
 
-examples = [
-    {
-        "inputs": {"question": "Do cats love milk?"},
-        "reference_outputs": {"answer": "Cats can drink milk, but many are lactose intolerant and it can cause digestive issues."}
-    },
-    {
-        "inputs": {"question": "What diseases do cats catch?"},
-        "reference_outputs": {"answer": "Cats can catch all sorts of diseases such as gum disease, canine heart worms, and even cancer and AIDS. They can also get tapeworms."}
-    },
-]
-
 correctness_instructions = """You are a teacher grading a quiz. You will be given 
 a QUESTION, the GROUND TRUTH (correct) ANSWER, and the STUDENT ANSWER. Here is the 
 grade criteria to follow:
@@ -67,20 +60,20 @@ of the criteria.
 Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion 
 are correct. Avoid simply stating the correct answer at the outset."""
 
-def correctness(example_dataset) -> dict:
+def correctness(example_dataset, embedding_model, language_model) -> dict:
     """An evaluator for RAG answer accuracy"""
     correctness_results = dict()
     for i in example_dataset:
         question = i["inputs"]["question"]
         # 1. Get the LLM/RAG response for the input question
-        retrieved_knowledge = retrieve(question, 3, EMBEDDING_MODEL)
-        model_answer = generate_response_string(question, retrieved_knowledge, LANGUAGE_MODEL)
+        retrieved_knowledge = retrieve(question, 3, embedding_model)
+        model_answer = generate_response_string(question, retrieved_knowledge, language_model)
         # 2. Evaluate correctness
         result = ollama_grade_correctness(
             question,
             model_answer,  # This is the LLM output
             i["reference_outputs"]["answer"],
-            LANGUAGE_MODEL
+            language_model
         )
         print(f"Q: {i['inputs']['question']}")
         print(f"Result: {result}\n")
@@ -92,22 +85,3 @@ def correctness(example_dataset) -> dict:
             'explanation': result['explanation'] if result else None
         }
     return correctness_results
-
-results = correctness(examples)
-print(results)
-
-# for ex in examples:
-#     # 1. Get the LLM/RAG response for the input question
-#     retrieved_knowledge = retrieve(ex["inputs"]["question"], 3, EMBEDDING_MODEL)
-#     model_answer = generate_response_string(ex["inputs"]["question"], retrieved_knowledge, LANGUAGE_MODEL)
-#     # 2. Evaluate correctness
-#     result = ollama_grade_correctness(
-#         ex["inputs"]["question"],
-#         model_answer,  # This is the LLM output
-#         ex["reference_outputs"]["answer"],
-#         LANGUAGE_MODEL
-#     )
-#     print(f"Q: {ex['inputs']['question']}")
-#     # results is a dict with 'explanation' and 'correct' keys
-#     print(f"Result: {result}\n")
-#     print(f"Result: {result['correct']}\n")

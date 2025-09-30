@@ -38,4 +38,5 @@ def retrieve(query, top_n, emb):
     similarities.sort(key=lambda x: x[1], reverse=True)
     
     # finally return the top N most similar chunks
+    print(similarities[:top_n])
     return similarities[:top_n]
