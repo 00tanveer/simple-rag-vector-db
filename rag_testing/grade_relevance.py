@@ -68,7 +68,7 @@ def relevance(example_dataset, embedding_model, language_model) -> dict:
         # 2. Evaluate relevance
         result = ollama_grade_relevance(
             question,
-            model_answer,  # This is the LLM output
+            model_answer,  # This is the student LLM output for the teacher LLM to judge
             language_model
         )
         print(f"Q: {i['inputs']['question']}")

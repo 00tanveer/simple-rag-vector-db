@@ -13,6 +13,7 @@ from grade_correctness import correctness
 from grade_relevance import relevance
 from grade_groundedness import groundedness
 from grade_retrieval import context_recall 
+from grade_retrieval_relevance import retrieval_relevance
 
 EMBEDDING_MODEL = 'mxbai-embed-large:latest'
 LANGUAGE_MODEL = 'gemma3:4b'
@@ -23,4 +24,5 @@ LANGUAGE_MODEL = 'gemma3:4b'
 # print(relevance_results)    
 # groundedness_results = groundedness(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
 # print(groundedness_results)
-context_recall_results = context_recall(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
+# context_recall_results = context_recall(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
+retrieval_relevance_results = retrieval_relevance(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
