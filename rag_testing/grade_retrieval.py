@@ -14,9 +14,17 @@ def ollama_grade_context_recall(question, retrieved_knowledge, reference_retriev
         f"QUESTION: {question}\n"
         f"RETRIEVED KNOWLEDGE: {retrieved_knowledge}\n"
         f"REFERENCE RETRIEVED KNOWLEDGE: {reference_retrieved_knowledge}\n"
-        "Grade:\n Respond in JSON with keys 'explanation' and 'context_recall' (value between 0 and 1)."
     )
-    response = ollama.chat(model=LANGUAGE_MODEL, messages=[{"role": "user", "content": prompt}])
+    response = ollama.chat(
+        model=LANGUAGE_MODEL, 
+        messages=[{"role": "user", "content": prompt}],
+        options={
+            "temperature": 0, # Deterministic output
+            "top_p": 1, # no nucleus sampling
+            "top_k": 1, # only pick most likely token
+            "seed": 42  # fixed seed
+        }
+    )
     content = response['message']['content'].strip()    
 
     # Try to extract JSON if it's wrapped in markdown code blocks
@@ -40,19 +48,47 @@ def ollama_grade_context_recall(question, retrieved_knowledge, reference_retriev
         print("Failed to parse LLM response:", response['message']['content'])
         return None
 
-context_recall_instructions = '''You are a teacher grading a quiz. You will 
-be given a QUESTION, the RETRIEVED KNOWLEDGE or facts the student has used to answer the 
-question, and the REFERENCE RETRIEVED KNOWLEDGE or grounded truth that all should 
-have been used by the student to answer the question. 
-You will grade the RETRIEVED KNOWLEDGE based on how well it matches the 
-REFERENCE RETRIEVED KNOWLEDGE by calculating something called context recall.
+context_recall_instructions = '''
+ROLE: You are evaluating context retrieval quality of a retrieval-augmented generation 
+application. 
 
-Here follows the step-by-step procedure to calculate the context recall, and later provide an explanation:
-(1) Figure out how many distinct facts are there in the REFERENCE RETRIEVED KNOWLEDGE. Call this number A.
-(2) Figure out how many of those facts are also present in the RETRIEVED KNOWLEDGE. Call this number B.
-(3) Calculate the context recall as B divided by A. This will be a number between 0 and 1.
-(4) Explain your reasoning and how you arrived at the numbers A and B, and the final context recall value.
-(5) Avoid simply stating the recall value at the outset.
+INPUT: You are given:
+- QUESTION: The user's question
+- RETRIEVED KNOWLEDGE: The facts actually retrieved by the system
+- REFERENCE RETRIEVED KNOWLEDGE: The ideal facts that should have been retrieved
+
+TASK: Calculate context recall = (number of reference facts found in retrieved knowledge) / (total reference facts)
+
+STEP-BY-STEP PROCESS:
+(1) Extract and list each distinct factual claim from REFERENCE RETRIEVED KNOWLEDGE. Number them clearly (Fact 1, Fact 2, etc.)
+(2) For EACH reference fact, check if the SAME INFORMATION appears in RETRIEVED KNOWLEDGE:
+    - Facts match if they convey the same meaning (exact wording not required)
+    - Example: "Cats get cancer" matches "Cats can develop cancer"
+    - Example: "Cats are subject to gum disease" matches "Cats get gum disease."
+    - Example: "Cats get tapeworms from mice" does NOT match "Cats get tapeworms" (missing source)
+    Mark each fact as:
+        - FOUND: if equivalent information exists in RETRIEVED KNOWLEDGE
+        - NOT FOUND: if missing or contradicted
+(3) Count: A = total reference facts, B = facts found
+(4) Calculate: context_recall = B / A
+(5) In your explanation field, show your work step-by-step before stating the final context recall value.
+
+CRITICAL rules/CONSTRAINTS:
+- Two facts are "the same" if they convey the same information, even with different wording
+- Do not hallucinate facts not present in the text
+- Be consistent: if you mark a fact as found, it must actually be present in RETRIEVED KNOWLEDGE
+
+OUTPUT: Respond in JSON with this EXACT structure:
+{
+  "reference_facts": ["fact 1", "fact 2", ...],  // List each reference fact
+  "found_in_retrieved": [true, false, ...],      // Boolean for each fact
+  "A": <integer>,                                 // Total reference facts
+  "B": <integer>,                                 // Facts found
+  "context_recall": <float>,                      // B/A (0.0 to 1.0)
+  "explanation": "<string>"                       // Your reasoning
+}
+
+Do not include any text outside the JSON.
 
 '''
 
@@ -69,9 +105,9 @@ def context_recall(example_dataset, embedding_model, language_model) -> dict:
             '\n'.join(reference_retrieved_knowledge),
             language_model
         )
-        print(f"Q: {i['inputs']['question']}")
-        print(f"Result: {result['context_recall']}\n")
-        print(f"Result: {result['explanation']}\n")
+        print(f"Q: {i['inputs']['question']}\n")
+        print(f"Context recall score: {result['context_recall']}")
+        print(f"Explanation: {result['explanation']}\n")
         context_recall_results[question] = {
             'context_recall': result['context_recall'] if result else None,
             'explanation': result['explanation'] if result else None

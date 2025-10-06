@@ -6,7 +6,6 @@ import psycopg
 from psycopg import sql
 import os
 from dotenv import load_dotenv
-load_dotenv()
 
 def db_feed_data_batch(data):
     print("Feeding data into database...")
@@ -31,6 +30,7 @@ def db_init():
         conn.commit()
         db_close(conn)
 def get_conn():
+    load_dotenv()
     return psycopg.connect(
         dbname=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),

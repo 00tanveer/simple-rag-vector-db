@@ -18,11 +18,11 @@ from grade_retrieval_relevance import retrieval_relevance
 EMBEDDING_MODEL = 'mxbai-embed-large:latest'
 LANGUAGE_MODEL = 'gemma3:4b'
 
-# correctness_results = correctness(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
-# print(_correctness_results)
-# relevance_results = relevance(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
-# print(relevance_results)    
-# groundedness_results = groundedness(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
-# print(groundedness_results)
-# context_recall_results = context_recall(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
+correctness_results = correctness(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
+print(_correctness_results)
+relevance_results = relevance(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
+print(relevance_results)    
+groundedness_results = groundedness(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
+print(groundedness_results)
+context_recall_results = context_recall(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
 retrieval_relevance_results = retrieval_relevance(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
