@@ -7,6 +7,7 @@ from indexing import *
 from retrieval import * 
 from generation import *
 EMBEDDING_MODEL = 'mxbai-embed-large:latest'
+LANGUAGE_MODEL = 'gemma2:2b'
 
 db_init()
 db_feed_data_batch(pipeline_get_raw_data())

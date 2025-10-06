@@ -26,3 +26,23 @@ def generate_response(query, retrieved_knowledge, language_model):
     print('Chatbot response:')
     for chunk in stream:
         print(chunk['message']['content'], end='', flush=True)
+
+def generate_response_string(query, retrieved_knowledge, language_model):
+    """Generate a response from the language model and return it as a string."""
+    # for chunk, similarity in retrieved_knowledge:
+    #     print(f' - (similarity: {similarity:.2f}) {chunk}')
+    instruction_prompt = f'''You are a helpful chatbot.\nUse only the following pieces of context to answer the question. Don't make up any new information:\n{'\n'.join([f' - {chunk}' for chunk, similarity in retrieved_knowledge])}\n'''
+
+    stream = ollama.chat(
+        model=language_model,
+        messages=[
+            {'role': 'system', 'content': instruction_prompt},
+            {'role': 'user', 'content': query}
+        ],
+        stream=True
+    )
+
+    response = ""
+    for chunk in stream:
+        response += chunk['message']['content']
+    return response
