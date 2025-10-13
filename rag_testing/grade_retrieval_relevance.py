@@ -20,7 +20,15 @@ def ollama_grade_retrieval_relevance(question, student_facts, language_model):
         f"STUDENT ANSWER: {student_facts}\n"
         "Grade:\n Respond in JSON with keys 'explanation' and 'retrieval-relevance' (True or False).'"
     )
-    response = ollama.chat(model=language_model, messages=[{'role': 'user', 'content': prompt}])
+    response = ollama.chat(
+        model=language_model, 
+        messages=[{'role': 'user', 'content': prompt}],
+        options={
+            "temperature": 0, # Deterministic output
+            "top_p": 1, # no nucleus sampling
+            "top_k": 1, # only pick most likely token
+            "seed": 42  # fixed seed
+        })
     content = response['message']['content'].strip()
      # Try to extract JSON if it's wrapped in markdown code blocks
     if '```json' in content:

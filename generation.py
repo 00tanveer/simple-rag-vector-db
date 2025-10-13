@@ -8,9 +8,9 @@ def generate_response(query, retrieved_knowledge, language_model):
     print("Generating response from language model...")
     for chunk, similarity in retrieved_knowledge:
         print(f' - (similarity: {similarity:.2f}) {chunk}')
-    instruction_prompt = f'''You are a helpful chatbot.
-    Use only the following pieces of context to answer the question. Don't make up any new information.
-    Aggregate similar information.
+    instruction_prompt = f'''You are a helpful chatbot answering questions on cats.
+    Use only the following pieces of context to answer the question. Ignore irrelevant context. Don't make up any new information or inconsistent facts about cats.
+    Aggregate similar information from the context. Don't be redundant.
     Be grammatically and semantically correct:
     {'\n'.join([f' - {chunk}' for chunk, similarity in retrieved_knowledge])}
     '''

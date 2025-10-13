@@ -21,7 +21,16 @@ def ollama_grade_groundedness(question, student_answer, retrieved_docs, LANGUAGE
         f"STUDENT ANSWER: {student_answer}\n"
         "Grade:\n Respond in JSON with keys 'explanation' and 'grounded' (True or False)."
     )
-    response = ollama.chat(model=LANGUAGE_MODEL, messages=[{"role": "user", "content": prompt}])
+    response = ollama.chat(
+        model=LANGUAGE_MODEL, 
+        messages=[{"role": "user", "content": prompt,
+        }],
+        options={
+            "temperature": 0, # Deterministic output
+            "top_p": 1, # no nucleus sampling
+            "top_k": 1, # only pick most likely token
+            "seed": 42  # fixed seed
+        })
     content = response['message']['content'].strip()
 
      # Try to extract JSON if it's wrapped in markdown code blocks
