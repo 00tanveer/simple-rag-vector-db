@@ -19,8 +19,24 @@ examples = [
             '''Cats can get tapeworms from eating fleas. These worms live inside the cat forever, or until they are 
             removed with medication. They reproduce by shedding a link from the end of their long bodies. This link crawls out 
             the cat’s anus, and sheds hundreds of eggs. These eggs are injected by flea larvae, and the cycle continues. Humans 
-            may get these tapeworms too, but only if they eat infected fleas. Cats with tapeworms should be dewormed by a veterinarian.
-            Cats can get tapeworms from eating mice. If your cat catches a mouse it is best to take the prize away from it.
-            Though rare, cats can contract canine heart worms. ''']
+            may get these tapeworms too, but only if they eat infected fleas.''',
+            '''Cats can get tapeworms from eating mice. If your cat catches a mouse it is best to take the prize away from it.''',
+            '''Though rare, cats can contract canine heart worms. '''
+        ]
     },
+    {
+        "inputs:": {"question": "How long do cats sleep?"},
+        "reference_outputs": {"answer": "Cats sleep an average 16 to 18 hours per day, almost 2/3rds of a day." },
+        "reference_retrieved_knowledge": [
+            '''On average, cats spend 2/3 of every day sleeping. That means a nine-year-old 
+            cat has been awake for only three years of its life.''',
+            '''
+                One reason that kittens sleep so much is because a growth hormone is released only during sleep.
+            ''',
+            '''
+                Cats sleep 16 to 18 hours per day. When cats are asleep, they are still alert to incoming stimuli. 
+                If you poke the tail of a sleeping cat, it will respond accordingly.
+            '''
+        ]
+    }
 ]

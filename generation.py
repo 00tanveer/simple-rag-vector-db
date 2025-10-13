@@ -9,7 +9,9 @@ def generate_response(query, retrieved_knowledge, language_model):
     for chunk, similarity in retrieved_knowledge:
         print(f' - (similarity: {similarity:.2f}) {chunk}')
     instruction_prompt = f'''You are a helpful chatbot.
-    Use only the following pieces of context to answer the question. Don't make up any new information:
+    Use only the following pieces of context to answer the question. Don't make up any new information.
+    Aggregate similar information.
+    Be grammatically and semantically correct:
     {'\n'.join([f' - {chunk}' for chunk, similarity in retrieved_knowledge])}
     '''
 
@@ -19,6 +21,12 @@ def generate_response(query, retrieved_knowledge, language_model):
             {'role': 'system', 'content': instruction_prompt},
             {'role': 'user', 'content': query}
         ],
+        options={
+            "temperature": 0, # Deterministic output
+            "top_p": 1, # no nucleus sampling
+            "top_k": 1, # only pick most likely token
+            "seed": 42  # fixed seed
+        },
         stream=True
     )
 

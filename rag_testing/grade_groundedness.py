@@ -81,7 +81,7 @@ def groundedness(example_dataset, embedding_model, language_model) -> dict:
         print(f"Result: {result}\n")
         groundedness_results[question] = {
             'model_answer': model_answer,
-            'groundedness': result['grounded'] if result else None,
+            'grounded': result['grounded'] if result else None,
             'explanation': result['explanation'] if result else None
         }
     return groundedness_results
