@@ -1,6 +1,6 @@
 # INTRODUCTION
 
-This is a simple naive retrieval-augmented generation application created to respond to queries about based on facts about cats in a text file. 
+This is a simple naive retrieval-augmented generation application created to respond to queries on facts about cats in a text file. You can run the project as a web app on your local server by following the instructions below:
 
 ## HOW TO RUN THIS PROJECT
 1. Clone the repository.
@@ -29,6 +29,7 @@ The primary goals for this project is:
 2. Knowledge representation - Indexing fixed-size chunks with a local Ollama embedding model `mxbai-embed-large:latest` and storing the embeddings in postgres
 3. Retrieval layer - basic cosine similarity search with top-n ranking
 4. Generation layer - generation with a local Ollama embedding model `gemma3:4b` with simple system and user prompts
+5. Evaluation layer - fundamental evaluators at every step of the RAG trace and visualization
 
 # PROVENANCE
 The previous version of this project had these properties:
@@ -54,6 +55,9 @@ We can view RAG evaluation as a tuple of "what is being evaluated?" vs "what is 
     - Evaluator - LLM-as-judge
 4. Retrieval Relevance - Retrieved docs vs input
     - Goal: Measure "how relevant are my retrieved docs/results for this query
+    - Evaluator - LLM-as-judge
+5. Context recall - Actual context retrieved vs exptected knowledge to be retrieved
+    - Goal: Measure how much of the expected context is retrieved
     - Evaluator - LLM-as-judge
 
 ![alt text](image.png)
