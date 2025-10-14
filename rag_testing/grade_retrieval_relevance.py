@@ -12,36 +12,33 @@ from retrieval import retrieve
 from generation import generate_response_string
 import ollama
 import json
+from pydantic import BaseModel
+
+class RetrievalRelevanceGrade(BaseModel):
+    retrieval_relevance: bool
+    explanation: str
 
 def ollama_grade_retrieval_relevance(question, student_facts, language_model):
     prompt = (
         f"{retrieval_relevance_instructions}\n"
         f"QUESTION: {question}\n"
         f"STUDENT ANSWER: {student_facts}\n"
-        "Grade:\n Respond in JSON with keys 'explanation' and 'retrieval-relevance' (True or False).'"
+        "Grade:\n Respond in JSON with keys 'explanation' and 'retrieval_relevance' (True or False).'"
     )
-    response = ollama.chat(model=language_model, messages=[{'role': 'user', 'content': prompt}])
+    response = ollama.chat(
+        model=language_model, 
+        messages=[{'role': 'user', 'content': prompt}],
+        options={
+            "temperature": 0, # Deterministic output
+            "top_p": 1, # no nucleus sampling
+            "top_k": 1, # only pick most likely token
+            "seed": 42  # fixed seed
+        },
+        format=RetrievalRelevanceGrade.model_json_schema()
+    )
     content = response['message']['content'].strip()
      # Try to extract JSON if it's wrapped in markdown code blocks
-    if '```json' in content:
-        # Extract JSON from markdown code block
-        start = content.find('```json') + 7
-        end = content.find('```', start)
-        content = content[start:end].strip()
-    elif '```' in content:
-        # Extract from generic code block
-        start = content.find('```') + 3
-        end = content.find('```', start)
-        content = content[start:end].strip()
-
-    # Try to parse the JSON from the LLM's response
-    try:
-        result = json.loads(content)
-        return result
-    except Exception as e:
-        print(e)
-        print("Failed to parse LLM response:", response['message']['content'])
-        return None
+    return json.loads(content)
 
 retrieval_relevance_instructions = '''
 You are a teacher grading a quiz. You will be given a QUESTION and a
@@ -65,22 +62,22 @@ conclusion are correct. Avoid simply stating the correct answer at the outset.
 
 def retrieval_relevance(example_dataset, embedding_model, language_model) -> dict:
     '''An evaluator for RAG retrieval relevance'''
-    retrieval_relevance_results = dict()
+    retrieval_relevance_results = []
     for i in example_dataset:
         question = i["inputs"]["question"]
          # 1. Get the LLM/RAG retrieved knowledge for the input question
-        retrieved_knowledge = retrieve(question, 3, embedding_model)
+        retrieved_knowledge = retrieve(question, 5, embedding_model)
         # 2. Evaluate relevance
         result = ollama_grade_retrieval_relevance(
             question,
             retrieved_knowledge,  # This is the student LLM retrieved knowledge for the teacher LLM to judge relevant to the question or not
             language_model
         )
-        print(f"Q: {i['inputs']['question']}")
-        print(f"Result: {result}\n")
         #Add to results dictionary
-        retrieval_relevance_results[question] = {
-            'retrieval_relevance': result['retrieval-relevance'] if result else None,
-            'explanation': result['explanation'] if result else None 
-        }
+        retrieval_relevance_results.append({
+            'question': question,
+            'retrieved_knowledge': retrieved_knowledge,
+            'retrieval_relevance': result['retrieval_relevance'],
+            'explanation': result['explanation'] 
+        })
     return retrieval_relevance_results

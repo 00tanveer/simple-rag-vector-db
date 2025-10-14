@@ -35,8 +35,9 @@ def retrieve(query, top_n, emb):
         similarities.append((fact, cosine_similarity(query_embedding, emb)))
     
     # sort by similarity score in descending order, because higher means more similar
+    similarities = [s for s in similarities if s[1] > 0.5]
     similarities.sort(key=lambda x: x[1], reverse=True)
     
     # finally return the top N most similar chunks
-    print(similarities[:top_n])
+    # print(similarities[:top_n])
     return similarities[:top_n]

@@ -13,6 +13,11 @@ from retrieval import retrieve
 from generation import generate_response_string
 import ollama
 import json
+from pydantic import BaseModel
+
+class GroundednessGrade(BaseModel):
+    grounded: bool
+    explanation: str
 
 def ollama_grade_groundedness(question, student_answer, retrieved_docs, LANGUAGE_MODEL):
     prompt = (
@@ -21,29 +26,21 @@ def ollama_grade_groundedness(question, student_answer, retrieved_docs, LANGUAGE
         f"STUDENT ANSWER: {student_answer}\n"
         "Grade:\n Respond in JSON with keys 'explanation' and 'grounded' (True or False)."
     )
-    response = ollama.chat(model=LANGUAGE_MODEL, messages=[{"role": "user", "content": prompt}])
+    response = ollama.chat(
+        model=LANGUAGE_MODEL, 
+        messages=[{"role": "user", "content": prompt,
+        }],
+        options={
+            "temperature": 0, # Deterministic output
+            "top_p": 1, # no nucleus sampling
+            "top_k": 1, # only pick most likely token
+            "seed": 42  # fixed seed
+        },
+        format=GroundednessGrade.model_json_schema()
+    )
     content = response['message']['content'].strip()
 
-     # Try to extract JSON if it's wrapped in markdown code blocks
-    if '```json' in content:
-        # Extract JSON from markdown code block
-        start = content.find('```json') + 7
-        end = content.find('```', start)
-        content = content[start:end].strip()
-    elif '```' in content:
-        # Extract from generic code block
-        start = content.find('```') + 3
-        end = content.find('```', start)
-        content = content[start:end].strip()
-    
-    # Try to parse the JSON from the LLM's response
-    try:
-        result = json.loads(content)
-        return result
-    except Exception as e:
-        print(e)
-        print("Failed to parse LLM response:", response['message']['content'])
-        return None
+    return json.loads(content)
 
 # Grade prompt
 grounded_instructions = """You are a teacher grading a quiz. You will be 
@@ -64,11 +61,11 @@ the outset."""
 
 def groundedness(example_dataset, embedding_model, language_model) -> dict:
     """An evaluator for RAG answer groundedness"""
-    groundedness_results = dict()
+    groundedness_results = []
     for i in example_dataset:
         question = i["inputs"]["question"]
         # 1. Get the LLM/RAG response for the input question
-        retrieved_knowledge = retrieve(question, 3, embedding_model)
+        retrieved_knowledge = retrieve(question, 5, embedding_model)
         model_answer = generate_response_string(question, retrieved_knowledge, language_model)
         # 2. Evaluate groundedness
         result = ollama_grade_groundedness(
@@ -77,11 +74,10 @@ def groundedness(example_dataset, embedding_model, language_model) -> dict:
             '\n'.join([f' - {chunk}' for chunk, similarity in retrieved_knowledge]),
             language_model
         )
-        print(f"Q: {i['inputs']['question']}")
-        print(f"Result: {result}\n")
-        groundedness_results[question] = {
+        groundedness_results.append({
+            'question': question,
             'model_answer': model_answer,
-            'groundedness': result['grounded'] if result else None,
-            'explanation': result['explanation'] if result else None
-        }
+            'grounded': result['grounded'],
+            'explanation': result['explanation'] 
+        })
     return groundedness_results
