@@ -16,7 +16,7 @@ from grade_retrieval import context_recall
 from grade_retrieval_relevance import retrieval_relevance
 
 EMBEDDING_MODEL = 'mxbai-embed-large:latest'
-LANGUAGE_MODEL = 'gemma2:24b'
+LANGUAGE_MODEL = 'gemma2:2b'
 # LANGUAGE_MODEL = 'tinyllama:1.1b-chat-v1-q4_0'
 
 correctness_results = correctness(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
@@ -30,6 +30,18 @@ print(retrieval_relevance_results)
 context_recall_results = context_recall(examples, EMBEDDING_MODEL, LANGUAGE_MODEL)
 print(context_recall_results)
 
+
+# saves all the results in a json file
+results = {
+    'correctness': correctness_results,
+    'groundedness': groundedness_results,
+    'relevance': relevance_results,
+    'retrieval_relevance': retrieval_relevance_results,
+    'context_recall': context_recall_results
+}
+
+with open('evaluation_results.json', 'w') as f:
+    json.dump(results, f, indent=2)
 '''
 correctness_results = {
     'q1': {
@@ -41,33 +53,33 @@ correctness_results = {
 }
 '''
 
-'''
-relevance_results = {
-    'q1': {
-        'model_answer':
-        'correct':
-        'explanation':
-    },
-    'q2': {}
-}
-'''
+# '''
+# relevance_results = {
+#     'q1': {
+#         'model_answer':
+#         'correct':
+#         'explanation':
+#     },
+#     'q2': {}
+# }
+# '''
 
-'''
-groundedness_results = {
-    'q1': {
-        'model_answer':
-        'grounded':
-        'explanation':
-    },
-    'q2': {}
-}
-'''
+# '''
+# groundedness_results = {
+#     'q1': {
+#         'model_answer':
+#         'grounded':
+#         'explanation':
+#     },
+#     'q2': {}
+# }
+# '''
 
-'''
-context_recall_results = {
-    'q1' : {
-        'context_recall':
-        'explanation':
-    }
-}
-'''
+# '''
+# context_recall_results = {
+#     'q1' : {
+#         'context_recall':
+#         'explanation':
+#     }
+# }
+# '''

@@ -37,6 +37,9 @@ The previous version of this project had these properties:
 3. Retrieval layer - basic cosine similarity search with top-n ranking
 4. Generation layer - generation with a local Ollama embedding model `gemma3:4b` with simple system and user prompts
 
+# INSIGHTS
+1. Used OpenAI and Claude for different kind of help queries on the project (not direct code completions) and and they still came very short of finding exactly what I was looking for. For example - Ollama has structured output and for the life of me, I couldn't figure out accurate JSON parsing for my chat generations which was a pain in the ass for evaluations.
+
 # RAG TESTING FRAMEWORK
 ## RAG EVALUATION
 We can view RAG evaluation as a tuple of "what is being evaluated?" vs "what is it being evaluated against?". There are different dimensions of this evaluation routine.

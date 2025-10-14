@@ -25,7 +25,7 @@ examples = [
         ]
     },
     {
-        "inputs:": {"question": "How long do cats sleep?"},
+        "inputs": {"question": "How long do cats sleep?"},
         "reference_outputs": {"answer": "Cats sleep an average 16 to 18 hours per day, almost 2/3rds of a day." },
         "reference_retrieved_knowledge": [
             '''On average, cats spend 2/3 of every day sleeping. That means a nine-year-old 

@@ -1,0 +1,162 @@
+{
+  "correctness": [
+    {
+      "question": "Do cats love milk?",
+      "model_answer": "No, cats cannot digest cow's milk properly. It gives them diarrhea and many will be sensitive to it. \n",
+      "correct": true,
+      "explanation": "The student answer accurately reflects the ground truth answer by stating that cats cannot digest cow's milk properly. It also correctly identifies potential negative consequences like diarrhea and sensitivity."
+    },
+    {
+      "question": "What diseases do cats catch?",
+      "model_answer": "Cats can catch a protozoan disease called Toxoplasmosis, which can cause illness in humans and birth defects in unborn babies.  A form of AIDS also exists in cats. \n",
+      "correct": true,
+      "explanation": "The student answer accurately identifies Toxoplasmosis as a protozoan disease that can affect both cats and humans, and correctly mentions the existence of feline AIDS. The answer also provides relevant information about potential health risks for both cats and humans."
+    },
+    {
+      "question": "How long do cats sleep?",
+      "model_answer": "Cats sleep an average of 2/3 of every day, which translates to about 16 to 18 hours per day. \n",
+      "correct": true,
+      "explanation": "The student answer accurately reflects the ground truth answer by stating that cats sleep an average of 2/3 of every day, which translates to about 16 to 18 hours per day. The student uses correct terminology and provides a clear explanation."
+    }
+  ],
+  "groundedness": [
+    {
+      "question": "Do cats love milk?",
+      "model_answer": "No, cats cannot properly digest cow's milk and it can cause diarrhea.  Contrary to popular belief, many people think that cats love milk but that isn't true. \n",
+      "grounded": true,
+      "explanation": "The student answer demonstrates a good understanding of the provided facts.  Here's why it is grounded: \n\n1. **Correctly identifies the digestive issue:** The student accurately states that cats cannot properly digest cow's milk and it can cause diarrhea.\n2. **Addresses the misconception about cat's love for milk:** The answer correctly refutes the popular belief that cats enjoy milk, which is a common misconception.\n3. **Provides additional relevant information:**  The answer includes additional facts like cats learning to use the litter box from their mothers and their lack of taste for sweets. \n\nThe student's response is grounded in the provided facts and demonstrates an understanding of the subject matter."
+    },
+    {
+      "question": "What diseases do cats catch?",
+      "model_answer": "Cats can contract a form of AIDS and various cancers, including lymphoma, which are known to be prevalent in the feline population. \n",
+      "grounded": false,
+      "explanation": "The student answer contains information that is not grounded in the provided FACTS.  Here's why: \n\n1. **AIDS in Cats:** The statement mentions a form of AIDS in cats. While some feline diseases can be similar to human immunodeficiency virus (HIV), the student answer does not specify this or provide any context about how it works. This is an assumption that needs to be grounded in factual information.\n2. **Cancer Types:**  The student answer lists lymphoma as a type of cancer prevalent in cats. While this is true, the FACTS only mentions that cats can get cancer and some types are treatable. The student answer makes a broad statement about prevalence without providing context or evidence from the provided facts.\n\nTo improve the answer, the student should: \n* **Clarify:**  Explain how the AIDS in cats relates to human AIDS (HIV). 2. **Provide Evidence:**  Support claims with factual information from the FACTS. For example, mention specific types of cancer mentioned in the FACTS and their prevalence in cats.\n3. **Focus on Facts:** Stick to the facts provided in the FACTS. Avoid making assumptions or introducing new information not present in the facts."
+    },
+    {
+      "question": "How long do cats sleep?",
+      "model_answer": "Cats sleep for an average of 2/3 of every day.  This means a nine-year-old cat has been awake for only three years of its life. \n",
+      "grounded": true,
+      "explanation": "The student answer accurately reflects the provided facts.  Here's a breakdown of why it is grounded: \n\n* **Cats sleep 2/3 of every day:** This statement directly aligns with the fact that cats spend an average of 2/3 of their day sleeping.\n* **Nine-year-old cat awake time:** The student correctly uses the information about a nine-year-old cat having been awake for only three years to demonstrate understanding of the sleep patterns. \n\nThe answer is grounded because it accurately reflects the provided facts and demonstrates an understanding of the relationship between sleep, age, and daily life for cats."
+    }
+  ],
+  "relevance": [
+    {
+      "question": "Do cats love milk?",
+      "model_answer": "No, many cats cannot properly digest cow's milk and it will give them diarrhea.  Contrary to popular belief, cats are social animals that enjoy human companionship. \n",
+      "relevant": false,
+      "explanation": "The student answer addresses the question by providing a factual response about why cats don't love milk.  It states that many cats cannot digest cow's milk, which is relevant to the question. However, it does not directly address the core of the question: 'Do cats love milk?' The answer focuses on the negative effects of milk consumption for cats and doesn't provide a clear yes or no response to the question.  Additionally, the statement about cats being social animals is an unrelated fact that doesn't contribute to answering the question."
+    },
+    {
+      "question": "What diseases do cats catch?",
+      "model_answer": "Cats can contract a form of AIDS and are susceptible to several types of cancer, including some that can be treated effectively. \n",
+      "relevant": false,
+      "explanation": "While the student answer touches on two specific diseases (AIDS and certain cancers), it does not comprehensively address the question which asks for a list of diseases cats can catch.  The answer is too narrow in scope. To be relevant, the answer should provide a broader range of diseases that are common to cats. For example, a good answer might include: 1) Feline Leukemia Virus (FeLV), 2) Feline Immunodeficiency Virus (FIV), 3) Upper Respiratory Infections (URIs), 4) Feline Infectious Peritonitis (FIP).  The student's response only provides two specific examples."
+    },
+    {
+      "question": "How long do cats sleep?",
+      "model_answer": "Cats sleep 16 to 18 hours per day on average. \n",
+      "relevant": true,
+      "explanation": "The student answer directly addresses the question by providing the average daily sleep duration for cats, which is 16 to 18 hours.  This response is concise and relevant to the question."
+    }
+  ],
+  "retrieval_relevance": [
+    {
+      "question": "Do cats love milk?",
+      "retrieved_knowledge": [
+        [
+          "Many cats cannot properly digest cow\u2019s milk. Milk and milk products give them diarrhea.",
+          0.7329817149663406
+        ],
+        [
+          "Contrary to popular belief, the cat is a social animal. A pet cat will respond and answer to speech, and seems to enjoy human companionship.",
+          0.6172301034324197
+        ],
+        [
+          "Mother cats teach their kittens to use the litter box.",
+          0.6022565095375784
+        ],
+        [
+          "Cats can\u2019t taste sweets.",
+          0.5990962698016743
+        ],
+        [
+          "Unlike dogs, cats do not have a sweet tooth. Scientists believe this is due to a mutation in a key taste receptor.",
+          0.588767117846741
+        ]
+      ],
+      "retrieval_relevance": false,
+      "explanation": "Here's a step-by-step explanation of why the facts are irrelevant to the question: 1. **The student provided facts about cats' digestion, social behavior, litter box training, taste preferences, and genetic mutations.**  These topics are unrelated to the question about whether cats love milk. 2. **Even if some keywords like 'cats' or 'milk' appear in the facts, they don't directly relate to the core of the question.** The student is providing information about various aspects of cat biology and behavior, not specifically addressing their relationship with milk."
+    },
+    {
+      "question": "What diseases do cats catch?",
+      "retrieved_knowledge": [
+        [
+          "Many people fear catching a protozoan disease, Toxoplasmosis, from cats. This disease can cause illness in the human, but more seriously, can cause birth defects in the unborn. Toxoplasmosis is a common disease, sometimes spread through the feces of cats. It is caused most often from eating raw or rare beef. Pregnant women and people with a depressed immune system should not touch the cat litter box. Other than that, there is no reason that these people have to avoid cats.",
+          0.7324240689722235
+        ],
+        [
+          "Many people fear catching a protozoan disease, Toxoplasmosis, from cats. This disease can cause illness in the human, but more seriously, can cause birth defects in the unborn.",
+          0.7225999113541174
+        ],
+        [
+          "Toxoplasmosis is a common disease, sometimes spread through the feces of cats. It is caused most often from eating raw or rare beef. Pregnant women and people with a depressed immune system should not touch the cat litter box. Other than that, there is no reason that these people have to avoid cats.",
+          0.6967107491100663
+        ],
+        [
+          "A form of AIDS exists in cats.",
+          0.6934766800985622
+        ],
+        [
+          "Cats, especially older cats, do get cancer. Many times this disease can be treated successfully.",
+          0.6736107992190881
+        ]
+      ],
+      "retrieval_relevance": false,
+      "explanation": "The student provided facts about diseases that cats can get, but the question specifically asks about diseases that *cats* catch.  While some of these facts mention diseases in general, they don't directly address the specific diseases a cat might contract. The focus is on human-related illnesses and their connection to cats."
+    },
+    {
+      "question": "How long do cats sleep?",
+      "retrieved_knowledge": [
+        [
+          "Cats sleep 16 to 18 hours per day. When cats are asleep, they are still alert to incoming stimuli. If you poke the tail of a sleeping cat, it will respond accordingly.",
+          0.8962530488088758
+        ],
+        [
+          "On average, cats spend 2/3 of every day sleeping. That means a nine-year-old cat has been awake for only three years of its life.",
+          0.7856609788413684
+        ],
+        [
+          "Cats spend nearly 1/3 of their waking hours cleaning themselves.",
+          0.7070607146843174
+        ],
+        [
+          "One reason that kittens sleep so much is because a growth hormone is released only during sleep.",
+          0.68320325863657
+        ],
+        [
+          "When well treated, a cat can live twenty or more years but the average life span of a domestic cat is 14 years.",
+          0.6439808579748286
+        ]
+      ],
+      "retrieval_relevance": false,
+      "explanation": "Here's a step-by-step explanation of why the facts are irrelevant to the question: \ud83d\ude34\n1. **Sleep Duration:** The student provides information about cats' sleep duration (16-18 hours). This is directly related to the question but not the specific time they sleep.\n2. **Cat Behavior:**  The facts mention how cats respond to stimuli while sleeping, and their cleaning habits. These details are interesting but don't provide a direct answer to the question about sleep duration.\n3. **Life Span:** The student mentions the average lifespan of a cat (14 years). This is relevant to the overall health and longevity of a cat but not directly related to how long they sleep.\n\nTherefore, the facts are irrelevant to the question of how long cats sleep."
+    }
+  ],
+  "context_recall": [
+    {
+      "question": "Do cats love milk?",
+      "context_recall": 0.5,
+      "explanation": "Here's the breakdown of the context recall calculation: \n\n1. **Reference Facts:** The reference knowledge lists facts about what cats can and cannot digest, including milk. We need to identify if these facts are present in the retrieved knowledge.\n2. **Finding Matching Information:** I compared each fact from the reference knowledge with the retrieved knowledge.  Here's a breakdown:\n    - 'Many cats cannot properly digest cow\u2019s milk.' - This is found in the retrieved knowledge, so it matches. \n    - 'Milk and milk products give them diarrhea.' - This is also found in the retrieved knowledge, matching the reference fact.\n\n3. **Counting:**  A = 4 (total reference facts) and B = 2 (facts found). \n4. **Context Recall:** context_recall = B / A = 2/4 = 0.5"
+    },
+    {
+      "question": "What diseases do cats catch?",
+      "context_recall": 0.5,
+      "explanation": "Here's the breakdown of the context recall calculation: \n\n1. **Reference Facts:** The reference knowledge lists several diseases that cats can catch:\n    - Gum disease\n    - Dental caries\n    - Cancer\n    - Tapeworms (from fleas or mice)\n    - Canine heart worms\n\n2. **Retreived Knowledge:**  The retrieved knowledge contains information about these diseases, but it's not a complete list:\n    - Toxoplasmosis: This is mentioned as a protozoan disease that can cause illness in humans and birth defects in unborn babies.\n    - Cancer: Mentions cats getting cancer, especially older cats. \n\n3. **Matching Facts:**  We need to find if the reference facts are present in the retrieved knowledge:\n    - Gum disease and dental caries match in the retrieved knowledge. 1/2 of the reference facts were found.\n    - Cancer matches in the retrieved knowledge. 1/2 of the reference facts were found.\n\n4. **Context Recall:**  The context recall is calculated as (number of reference facts found) / (total reference facts). In this case, it's 1/2."
+    },
+    {
+      "question": "How long do cats sleep?",
+      "context_recall": 0.5,
+      "explanation": "Here's the breakdown of the context recall calculation: \n\n1. **Reference Facts:** The reference knowledge lists several facts about cats' sleep patterns:\n    - Cats spend 2/3 of every day sleeping.\n    - A nine-year-old cat has been awake for only three years of its life.\n    - One reason that kittens sleep so much is because a growth hormone is released only during sleep.\n\n2. **Retreived Knowledge:** The retrieved knowledge provides similar information:\n    - Cats sleep 16 to 18 hours per day.\n    - When cats are asleep, they are still alert to incoming stimuli.\n    - If you poke the tail of a sleeping cat, it will respond accordingly.\n\n3. **Matching Facts:** We need to identify if the same information is present in both sets:\n    - 'Cats spend 2/3 of every day sleeping' matches 'Cats sleep 16 to 18 hours per day.' (exact wording) \n    - 'A nine-year-old cat has been awake for only three years of its life' matches 'When cats are asleep, they are still alert to incoming stimuli.' (meaning conveyed)\n\n4. **Counting:** A = total reference facts: 5  (five facts listed in the reference knowledge) B = facts found: 3 (three facts from the retrieved knowledge match the reference facts). \n\n5. **Context Recall:** B / A = 3/5 = 0.6"
+    }
+  ]
+}
