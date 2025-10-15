@@ -1,3 +1,4 @@
 simple-rag-vector-db_env/
 .env
 __pycache__/
+venv/

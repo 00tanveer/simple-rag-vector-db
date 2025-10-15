@@ -1,10 +1,10 @@
 # INTRODUCTION
 
-This is a simple naive retrieval-augmented generation application created to respond to queries about based on facts about cats in a text file. 
+This is a simple naive retrieval-augmented generation application created to respond to queries on facts about cats in a text file. You can run the project as a web app on your local server by following the instructions below:
 
-## HOW TO RUN THIS PROJECT
+## HOW TO RUN THIS PROJECT ON LOCALHOST
 1. Clone the repository.
-2. Create a new Python environment using `venv`.
+2. In `backend/` directory, create a new Python environment using `venv`.
 3. Activate the new venv environment and install all the requirments from `requirements.txt` using `pip`.
 4. Write a new `.env` file and enter data for these variables for a Postgres database connection.
 DB_USER=
@@ -12,10 +12,13 @@ DB_PASSWORD=
 DB_HOST=
 DB_PORT=
 DB_NAME=
-5. Run `python app.py`
+5. Run `python app.py` to run the flask app on `http://localhost:5000`
 6. Run `python rag_testing/testing_main.py` for evaluation.
+7. To run the React app, go to the `frontend/` directory and install all dependencies using `npm install`.
+8. Run using `npm run dev` and voila you can access the webapp on `http://localhost:5173/`.
+9. Interact with the RAG bot using the chat feature and see your evalution results on "Evaluation Dashboard" tab if you've previously generated your evaluation results.
 
-*Caveats: The project may break in certain places. I haven't written any tests for the program itself yet. There are lots of things to do to build on this (Read Next Steps at the end of this Readme). Feel free clone this project, work on your branch and create pull requests later.*
+*Caveats: The project may break in certain places. I haven't written any tests for the program itself yet. There are lots of things to do to build on this (Read Next Steps at the end of this Readme). Feel free to clone this project and play around with what's been built so far.
 
 
 # PROJECT GOALS
@@ -29,8 +32,9 @@ The primary goals for this project is:
 2. Knowledge representation - Indexing fixed-size chunks with a local Ollama embedding model `mxbai-embed-large:latest` and storing the embeddings in postgres
 3. Retrieval layer - basic cosine similarity search with top-n ranking
 4. Generation layer - generation with a local Ollama embedding model `gemma3:4b` with simple system and user prompts
+5. Evaluation layer - fundamental evaluators at every step of the RAG trace and visualization
 
-# PROVENANCE
+# WHAT DID I BUILD BEFORE THIS?
 The previous version of this project had these properties:
 1. Data layer - local text file and an in-memory Python tuple to store vector embeddings
 2. Knowledge representation - Indexing fixed-size chunks with a local Ollama embedding model `mxbai-embed-large:latest`
@@ -55,6 +59,9 @@ We can view RAG evaluation as a tuple of "what is being evaluated?" vs "what is 
 4. Retrieval Relevance - Retrieved docs vs input
     - Goal: Measure "how relevant are my retrieved docs/results for this query
     - Evaluator - LLM-as-judge
+5. Context recall - Actual context retrieved vs exptected knowledge to be retrieved
+    - Goal: Measure how much of the expected context is retrieved
+    - Evaluator - LLM-as-judge
 
 ![alt text](image.png)
 
@@ -63,5 +70,5 @@ We can view RAG evaluation as a tuple of "what is being evaluated?" vs "what is 
 2. Improve context recall by testing different embedding strategies (maybe make embedding modular so that I can swap in and out different embedding methods and test them in isolation while controlling other variables)
 3. Latency measurement (now it takes way too long to generate locally on my machine, want to see if I can bring it down)
 3. Throughput measurement (want to measure how many resopnses per unit time this application can handle)
-4. Build a custom RAG tests dashboard
+4. Build a RAG evaluation dashboard by borrowing features from MLFlow and similar libraries.
 5. This application produces inconsistent responses which also contain some hallucinations in the generation phase. I need to have better parameteres for more determinism (ex - lower temperature, fixed seed values, etc). The prompt instruction plays the biggest role in deterministic answers. I need to come up with a super strong template.
