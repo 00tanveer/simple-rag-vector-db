@@ -1,20 +1,47 @@
-import ollama
-import ast
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
+from rag_api import RAGSystem
+import json
 
-from data_pipeline import *
-from db import *
-from indexing import *
-from retrieval import * 
-from generation import *
-EMBEDDING_MODEL = 'mxbai-embed-large:latest'
-LANGUAGE_MODEL = 'gemma2:2b'
+app = Flask(__name__)
+CORS(app)
 
-db_init()
-db_feed_data_batch(pipeline_get_raw_data())
-create_embeddings(EMBEDDING_MODEL)
-# main chat loop
-input_query = input('Ask me a question: ')
-retrieved_knowledge = retrieve(input_query, 10, EMBEDDING_MODEL)
-print('Retrieved knowledge:', retrieved_knowledge)
-print('\n')
-generate_response(input_query, retrieved_knowledge, LANGUAGE_MODEL)
+# Initialize RAG once on startup
+rag = RAGSystem()
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    data = request.json
+    query = data.get('query')
+    
+    if not query:
+        return jsonify({'error': 'No query provided'}), 400
+    
+    retrieved = rag.retrieve(query)
+    response = rag.generate_response(query, retrieved)
+    
+    return jsonify({
+        'query': query,
+        'response': response,
+        'retrieved_context': retrieved
+    })
+
+@app.route('/api/evaluation-results', methods=['GET'])
+def get_eval_results():
+    try:
+        with open('evaluation_results.json', 'r') as f:
+            return jsonify(json.load(f))
+    except:
+        return jsonify({'error': 'Results not found'}), 404
+
+# Serve frontend
+@app.route('/')
+def serve_frontend():
+    return send_from_directory('frontend', 'index.html')
+
+@app.route('/<path:path>')
+def serve_files(path):
+    return send_from_directory('frontend', path)
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)

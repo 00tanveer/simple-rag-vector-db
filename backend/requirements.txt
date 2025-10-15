@@ -1,2 +1,5 @@
 ollama
 psycopg
+flask
+flask-cors
+dotenv

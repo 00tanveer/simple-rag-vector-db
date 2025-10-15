@@ -19,7 +19,7 @@ export default function ChatPage() {
       const response = await axios.post('http://localhost:5000/api/chat', {
         query: query
       });
-
+      console.log(response)
       // Add assistant response
       const assistantMessage = {
         role: 'assistant',
